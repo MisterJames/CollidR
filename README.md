@@ -13,6 +13,7 @@ Run the CollidR.Sample project (go to /person) to get a sense of what's going on
 To get it going in your own project you'll need to
  * reference the CollidR DLL
  * copy CollidR.js into your scripts folder
+ * call RouteTable.Routes.MapHubs(); from Application_Start
  * reference the script from your edit page
  * create an instance of the CollidR proxy and register the client
 
