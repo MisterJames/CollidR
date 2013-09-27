@@ -27,6 +27,7 @@ namespace CollidR
             // send the list of editors to all in the group
             var users = _connections.GetConnections(groupTag);
             Clients.Group(groupTag).updateEditorList(string.Join(", ", users));
+            Clients.Group(groupTag).editorConnected(username);
 
         }
 
@@ -66,6 +67,7 @@ namespace CollidR
             {
                 var users = _connections.GetConnections(groupTag);
                 Clients.Group(groupTag).updateEditorList(string.Join(", ", users));
+                Clients.Group(groupTag).editorDisconnected(username);
             }
 
             return base.OnDisconnected();

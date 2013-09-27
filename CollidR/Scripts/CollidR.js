@@ -25,7 +25,9 @@
     var events = {
         onEnterField: "onEnterField",
         onExitField: "onExitField",
-        onEditorsUpdated: "onEditorsUpdated"
+        onEditorsUpdated: "onEditorsUpdated",
+        onEditorDisconnected: "onEditorDisconnected",
+        onEditorConnected: "onEditorConnected"
     };
 
     var log = function (msg, logging) {
@@ -84,6 +86,16 @@
             $("#editors").html(names);
             $(window).triggerHandler(events.onEditorsUpdated, [{ names: names }]);
             log('New editor list: ' + names);
+        });
+
+        hubProxy.on('editorConnected', function (username) {
+            $(window).triggerHandler(events.onEditorConnected, { username: username });
+            log(username + " has joined this page.");
+        });
+
+        hubProxy.on('editorDisconnected', function (username) {
+            $(window).triggerHandler(events.onEditorDisconnected, { username: username });
+            log(username + " has left this page.");
         });
 
         // ==================================================
