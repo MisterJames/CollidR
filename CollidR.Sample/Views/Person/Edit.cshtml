@@ -1,0 +1,77 @@
+﻿@model CollidR.Sample.Models.Person
+
+@{
+
+    ViewBag.Title = "Edit";
+}
+
+<div class="container">
+    <div class="row">
+        <h3>CollidR Demo</h3>
+        <div class="alert alert-success" data-collidr="editorsPane">
+            <span data-collidr="editorsList"></span>
+        </div>
+    </div>
+</div>
+
+@using (Html.BeginForm("Edit", "Person", FormMethod.Post, new {@class = "form-horizontal", role="form"} )) {
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <fieldset>
+        <legend>Person</legend>
+
+        @Html.HiddenFor(model => model.PersonId)
+
+            <div class="form-group">
+                @Html.LabelFor(model => model.FirstName, new {@class="col-sm-3"})
+                <div class="col-sm-3">
+                    @Html.EditorFor(model => model.FirstName)
+                    @Html.ValidationMessageFor(model => model.FirstName)
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.LastName, new {@class="col-sm-3"})
+                <div class="col-sm-3">
+                    @Html.EditorFor(model => model.LastName)
+                    @Html.ValidationMessageFor(model => model.LastName)
+                </div>
+            </div>
+        <p>
+            <input type="submit" value="Save" />
+        </p>
+    </fieldset>
+}
+
+<div>
+    Messages:
+    <ul data-collidR="log"></ul>
+</div>
+
+<div>
+    Editors: <span id="editors"></span>
+</div>
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="~/Scripts/jquery.signalR-1.1.3.js"></script>
+    <script src="~/Scripts/bootstrap.js"></script>
+    <script src="~/Scripts/CollidR.js"></script>
+    <script type="text/javascript">
+
+        var collidR = new $.collidR( 
+            {
+                entityType: "@Model.GetType().FullName", 
+                entityId: @Model.PersonId
+            })
+        .registerClient();
+     
+    </script>
+
+}
