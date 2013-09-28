@@ -70,6 +70,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Scripts\CollidR.js" />
+    <Content Include="Scripts\CollidR\CollidR.Core.js" />
+    <Content Include="Scripts\CollidR\CollidR.Formatters.Bootstrap.js" />
     <Content Include="Scripts\jquery-2.0.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.0.3.js" />
     <Content Include="Scripts\jquery-2.0.3.min.js" />

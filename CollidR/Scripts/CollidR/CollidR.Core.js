@@ -1,6 +1,6 @@
 ﻿/* CollidR.Core.js */
 /*
- * CollidR JavaScript Library v0.1.0
+ * CollidR JavaScript Library
  * http://github.com/MisterJames/CollidR
  *
  * Copyright James Chambers. All rights reserved.
@@ -57,7 +57,7 @@
             decorationFormat: "twitter.bootstrap.3.0",
             decorate: true,
         }, options);
-        
+
         // ==================================================
         var connection = $.hubConnection();
         var hubName = 'CollidRHub';
@@ -136,7 +136,7 @@
             });
 
         };
-        
+
         // ==================================================
         // data-api-ish stuff
         // ==================================================
@@ -157,76 +157,5 @@
     $.collidR.prototype.events = events;
     $.collidR.prototype.log = log;
     $.collidR.prototype.autoFormatters = autoFormatters;
-
-}(window.jQuery, window));
-
-/* CollidR.Formatters.Bootstrap.js */
-/*
- * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
- * http://github.com/MisterJames/CollidR
- *
- * Copyright James Chambers. All rights reserved.
- * Licensed under the Apache 2.0
- * https://github.com/MisterJames/CollidR/wiki/CollidR-License
- * Applies changes to the page based on the Twitter Bootstrap library
- */
-(function ($, window) {
-    "use strict";
-    
-    if (typeof ($.fn.alert) === undefined) {
-        collidR.log("CollidR: *** The Bootstrap Formatter could not be initialized because it appears that Bootstrap.js is not loaded.");
-    }
-    else {
-        // we only wire up for Bootstrap if it's loaded
-        var collidR = new $.collidR;
-        $(window).on(collidR.events.onEditorsUpdated, function (e, data) {
-            collidR.log("Editors updated with: " + data.names);
-
-            // get the count of users to format accordingly
-            var users = data.names.split(',');
-            if (users.length === 1) {
-                // format
-                collidR.autoFormatters.editorsPane
-                    .removeClass('alert-warning')
-                    .addClass('alert-success');
-                // set the text
-                collidR.autoFormatters.editorsList.html('<span class="glyphicon glyphicon-thumbs-up"></span> You are the only editor.');
-            }
-            else {
-                // format
-                collidR.autoFormatters.editorsPane
-                    .removeClass('alert-success')
-                    .addClass('alert-warning');
-                // set the text
-                collidR.autoFormatters.editorsList.html('<span class="glyphicon glyphicon-eye-open"></span> There are currently 2 editors: ' + data.names);
-            }
-
-        });
-
-        $(window).on(collidR.events.onEnterField, function (e, data) {
-            collidR.log("Field " + data.field + " entered by " + data.name);
-
-            var message = data.name + " is editing this field.";
-            var fieldName = "#" + data.field;
-
-            // set up the tooltip
-            $(fieldName)
-                .attr('title', message)
-                .attr('data-trigger', 'manual')
-                .tooltip('show');
-
-        });
-
-        $(window).on(collidR.events.onExitField, function (e, data) {
-            collidR.log("Field " + data.field + " left by " + data.name);
-
-            var fieldName = "#" + data.field;
-
-            // set up the tooltip
-            $(fieldName)
-                .tooltip('hide');
-
-        });
-    }
 
 }(window.jQuery, window));
