@@ -1,4 +1,4 @@
-﻿/* CollidR.Core.js */
+﻿/* CollidR.js */
 /*
  * CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
@@ -25,7 +25,9 @@
     var events = {
         onEnterField: "onEnterField",
         onExitField: "onExitField",
-        onEditorsUpdated: "onEditorsUpdated"
+        onEditorsUpdated: "onEditorsUpdated",
+        onEditorDisconnected: "onEditorDisconnected",
+        onEditorConnected: "onEditorConnected"
     };
 
     var log = function (msg, logging) {
@@ -57,7 +59,7 @@
             decorationFormat: "twitter.bootstrap.3.0",
             decorate: true,
         }, options);
-        
+
         // ==================================================
         var connection = $.hubConnection();
         var hubName = 'CollidRHub';
@@ -84,6 +86,16 @@
             $("#editors").html(names);
             $(window).triggerHandler(events.onEditorsUpdated, [{ names: names }]);
             log('New editor list: ' + names);
+        });
+
+        hubProxy.on('editorConnected', function (username) {
+            $(window).triggerHandler(events.onEditorConnected, { username: username });
+            log(username + " has joined this page.");
+        });
+
+        hubProxy.on('editorDisconnected', function (username) {
+            $(window).triggerHandler(events.onEditorDisconnected, { username: username });
+            log(username + " has left this page.");
         });
 
         // ==================================================
@@ -136,7 +148,7 @@
             });
 
         };
-        
+
         // ==================================================
         // data-api-ish stuff
         // ==================================================
@@ -160,7 +172,7 @@
 
 }(window.jQuery, window));
 
-/* CollidR.Formatters.Bootstrap.js */
+/* CollidR.BootstrapFormatter.js */
 /*
  * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
@@ -172,9 +184,9 @@
  */
 (function ($, window) {
     "use strict";
-    
+
     if (typeof ($.fn.alert) === undefined) {
-        collidR.log("CollidR: *** The Bootstrap Formatter could not be initialized because it appears that Bootstrap.js is not loaded.");
+        collidR.log(" *** The Bootstrap Formatter could not be initialized because it appears that Bootstrap.js is not loaded.");
     }
     else {
         // we only wire up for Bootstrap if it's loaded
@@ -206,8 +218,9 @@
         $(window).on(collidR.events.onEnterField, function (e, data) {
             collidR.log("Field " + data.field + " entered by " + data.name);
 
-            var message = data.name + " is editing this field.";
-            var fieldName = "#" + data.field;
+            var message = data.name + ' is editing this field.';
+            var fieldName = '#' + data.field;
+            var dataAttr = 'data-' + data.name;
 
             // set up the tooltip
             $(fieldName)
@@ -215,17 +228,30 @@
                 .attr('data-trigger', 'manual')
                 .tooltip('show');
 
+            // add data attribute to track user
+            $(fieldName)
+                .attr(dataAttr, 'edit')
+
         });
 
         $(window).on(collidR.events.onExitField, function (e, data) {
             collidR.log("Field " + data.field + " left by " + data.name);
 
             var fieldName = "#" + data.field;
+            var dataAttr = 'data-' + data.name;
 
-            // set up the tooltip
+            // hide the tooltip
             $(fieldName)
                 .tooltip('hide');
 
+            // clean up data attribute
+            $(":input")
+                .attr('title', '')
+                .removeAttr(dataAttr);
+        });
+
+        $(window).on(collidR.events.onEditorConnected, function (e, data) {
+            collidR.log(data.name + " has joined this entity.");
         });
     }
 
