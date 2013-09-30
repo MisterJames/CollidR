@@ -1,12 +1,10 @@
-﻿/* CollidR.js */
+﻿/* CollidR.Core.js /
 /*
  * CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
  *
  * Copyright James Chambers. All rights reserved.
- * Licensed under the Apache 2.0
- * https://github.com/MisterJames/CollidR/wiki/CollidR-License
- *
+ * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  */
 
 /// <reference path="jquery-1.9.1.js" />
@@ -25,7 +23,9 @@
     var events = {
         onEnterField: "onEnterField",
         onExitField: "onExitField",
-        onEditorsUpdated: "onEditorsUpdated"
+        onEditorsUpdated: "onEditorsUpdated",
+        onEditorDisconnected: "onEditorDisconnected",
+        onEditorConnected: "onEditorConnected"
     };
 
     var log = function (msg, logging) {
@@ -57,7 +57,7 @@
             decorationFormat: "twitter.bootstrap.3.0",
             decorate: true,
         }, options);
-        
+
         // ==================================================
         var connection = $.hubConnection();
         var hubName = 'CollidRHub';
@@ -84,6 +84,16 @@
             $("#editors").html(names);
             $(window).triggerHandler(events.onEditorsUpdated, [{ names: names }]);
             log('New editor list: ' + names);
+        });
+
+        hubProxy.on('editorConnected', function (username) {
+            $(window).triggerHandler(events.onEditorConnected, { username: username });
+            log(username + " has joined this page.");
+        });
+
+        hubProxy.on('editorDisconnected', function (username) {
+            $(window).triggerHandler(events.onEditorDisconnected, { username: username });
+            log(username + " has left this page.");
         });
 
         // ==================================================
@@ -136,7 +146,7 @@
             });
 
         };
-        
+
         // ==================================================
         // data-api-ish stuff
         // ==================================================
@@ -160,25 +170,118 @@
 
 }(window.jQuery, window));
 
+/* CollidR.stringDictionary.js */
+/*
+ * stringDictionary for CollidR JavaScript Library v0.1.0
+ * http://github.com/MisterJames/CollidR
+ *
+ * Copyright James Chambers. All rights reserved.
+ * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
+ */
+(function ($, window) {
+    "use strict";
+
+    $.stringDictionary = function () {
+        this.data = {};
+
+        // adds a unique value to the array stored in 'key'
+        this.add = function (key, value) {
+
+            var hasKey = this.data[key];
+            if (hasKey) {
+                if (!this.contains(key, value)) {
+                    this.data[key].push(value);
+                }
+            } else {
+                this.data[key] = new Array();
+                this.data[key].push(value);
+            }
+        };
+
+        // attempts to remove the value from the array in 'key'
+        this.remove = function (key, value) {
+
+            var values = this.data[key];
+            var index = values.indexOf(value);
+
+            if (index > -1) {
+                values.splice(index, 1);
+            }
+
+        };
+
+        // attempts to remove the value from all keys
+        this.removeValue = function (value) {
+            var result = new Array();
+            for (var key in this.data) {
+                var values = this.data[key];
+                var index = values.indexOf(value);
+
+                if (index > -1) {
+                    values.splice(index, 1);
+                    result.push(key);
+                }
+            }
+            return result;
+        }
+
+        // dumps the entire map to the console
+        this.dumpFields = function () {
+            console.log(this.data);
+            for (var key in this.data) {
+                var values = this.data[key];
+                for (var index in values) {
+                    var msg = key + ':' + values[index];
+                    console.log(msg);
+                    $("#foo").append($('<p>').html(msg));
+                }
+            }
+            console.log('-----');
+        }
+
+        // checks to see if a value is present in the map
+        this.contains = function (key, value) {
+            return (this.data[key].indexOf(value) > -1);
+        }
+
+        // helper method to get the list of keys
+        this.keys = function () {
+            var result = new Array();
+            for (var key in this.data) {
+                result.push(key);
+            }
+            return result;
+        }
+
+        // clears all the data
+        this.clear = function () {
+            this.data = {};
+        }
+
+    };
+}(window.jQuery, window));
+
+
 /* CollidR.BootstrapFormatter.js */
 /*
  * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
  *
  * Copyright James Chambers. All rights reserved.
- * Licensed under the Apache 2.0
- * https://github.com/MisterJames/CollidR/wiki/CollidR-License
+ * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  * Applies changes to the page based on the Twitter Bootstrap library
  */
 (function ($, window) {
     "use strict";
-    
+
     if (typeof ($.fn.alert) === undefined) {
-        collidR.log("CollidR: *** The Bootstrap Formatter could not be initialized because it appears that Bootstrap.js is not loaded.");
+        collidR.log(" *** The Bootstrap Formatter could not be initialized because it appears that Bootstrap.js is not loaded.");
     }
     else {
         // we only wire up for Bootstrap if it's loaded
         var collidR = new $.collidR;
+        var fieldMap = new $.stringDictionary();
+
         $(window).on(collidR.events.onEditorsUpdated, function (e, data) {
             collidR.log("Editors updated with: " + data.names);
 
@@ -205,28 +308,58 @@
 
         $(window).on(collidR.events.onEnterField, function (e, data) {
             collidR.log("Field " + data.field + " entered by " + data.name);
+            fieldMap.add(data.field, data.name);
+            fieldMap.dumpFields();
 
-            var message = data.name + " is editing this field.";
-            var fieldName = "#" + data.field;
-
-            // set up the tooltip
-            $(fieldName)
-                .attr('title', message)
-                .attr('data-trigger', 'manual')
-                .tooltip('show');
+            showToolTip(data.field);
 
         });
 
         $(window).on(collidR.events.onExitField, function (e, data) {
             collidR.log("Field " + data.field + " left by " + data.name);
+            fieldMap.remove(data.field, data.name);
 
-            var fieldName = "#" + data.field;
-
-            // set up the tooltip
-            $(fieldName)
-                .tooltip('hide');
+            showToolTip(data.field);
 
         });
+
+        $(window).on(collidR.events.onEditorConnected, function (e, data) {
+            collidR.log(data.name + " has joined this entity.");
+        });
+
+        $(window).on(collidR.events.onEditorDisconnected, function (e, data) {
+            // get the list of fields the user was part of
+            // by calling removeValue
+            var fields = fieldMap.removeValue(data.username);
+
+            // foreach the list of fields, and update the related tooltips
+            $.each(fields, function (index, value) {
+                showToolTip(value);
+            });
+
+            collidR.log(data.name + " has left this entity.");
+        });
+
+        var showToolTip = function (field) {
+            var fieldName = '#' + field;
+
+            if (fieldMap.data[field].length > 0) {
+                var message = 'This field is being edited by:' + fieldMap.data[field].join();
+
+                // set up the tooltip
+                $(fieldName)
+                    .attr('title', message)
+                    .attr('data-trigger', 'manual')
+                    .tooltip('show');
+            }
+            else {
+                // hide the tooltip
+                $(fieldName)
+                    .attr('title', '')
+                    .tooltip('hide');
+            }
+        }
+
     }
 
 }(window.jQuery, window));
