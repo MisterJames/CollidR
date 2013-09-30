@@ -59,7 +59,7 @@ namespace CollidR
 
         public override Task OnDisconnected()
         {
-            var username = HttpContext.Current.User.Identity.Name;
+            var username = Context.User.Identity.Name;
             var groups = _connections.ClearUser(username);
 
             // notify any groups the user was in

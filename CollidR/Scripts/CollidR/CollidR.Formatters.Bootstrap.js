@@ -1,34 +1,23 @@
-﻿/// <reference path="collidr.core.js" />
-/// <reference path="collidr.core.js" />
-/* CollidR.Formatters.Bootstrap.js */
+﻿/* CollidR.BootstrapFormatter.js */
 /*
- * Twitter.Bootstrap Formatter for CollidR JavaScript Library
+ * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
  *
  * Copyright James Chambers. All rights reserved.
- * Licensed under the Apache 2.0
- * https://github.com/MisterJames/CollidR/wiki/CollidR-License
+ * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  * Applies changes to the page based on the Twitter Bootstrap library
  */
-
-/// <reference path="jquery-1.9.1.js" />
-/// <reference path="jquery.signalr-1.1.3.js" />
-/// <reference path="collidr.core.js" />
-/// <reference path="collidr.stringdictionary.js" />
-
 (function ($, window) {
     "use strict";
 
     if (typeof ($.fn.alert) === undefined) {
-        collidR.log("CollidR: *** The Bootstrap Formatter could not be initialized because it appears that Bootstrap.js is not loaded.");
+        collidR.log(" *** The Bootstrap Formatter could not be initialized because it appears that Bootstrap.js is not loaded.");
     }
     else {
         // we only wire up for Bootstrap if it's loaded
         var collidR = new $.collidR;
-
-        // keep track of the fields that users are editing
         var fieldMap = new $.stringDictionary();
-        
+
         $(window).on(collidR.events.onEditorsUpdated, function (e, data) {
             collidR.log("Editors updated with: " + data.names);
 
@@ -55,43 +44,19 @@
 
         $(window).on(collidR.events.onEnterField, function (e, data) {
             collidR.log("Field " + data.field + " entered by " + data.name);
-
-            var message = data.name + ' is editing this field.';
-            var fieldName = '#' + data.field;
-            var dataAttr = 'data-' + data.name;
-
-            // track the edit
             fieldMap.add(data.field, data.name);
+            fieldMap.dumpFields();
 
-            // set up the tooltip
-            $(fieldName)
-                .attr('title', message)
-                .attr('data-trigger', 'manual')
-                .tooltip('show');
-
-            // add data attribute to track user
-            $(fieldName)
-                .attr(dataAttr, 'edit')
+            showToolTip(data.field);
 
         });
 
         $(window).on(collidR.events.onExitField, function (e, data) {
             collidR.log("Field " + data.field + " left by " + data.name);
-
-            var fieldName = "#" + data.field;
-            var dataAttr = 'data-' + data.name;
-
-            // track the edit
             fieldMap.remove(data.field, data.name);
 
-            // hide the tooltip
-            $(fieldName)
-                .tooltip('hide');
+            showToolTip(data.field);
 
-            // clean up data attribute
-            $(":input")
-                .attr('title', '')
-                .removeAttr(dataAttr);
         });
 
         $(window).on(collidR.events.onEditorConnected, function (e, data) {
@@ -99,14 +64,37 @@
         });
 
         $(window).on(collidR.events.onEditorDisconnected, function (e, data) {
-            var dataAttr = 'data-' + data.name;
-            var inputFields = $('[' + dataAttr + '="' + data.name + '"]')
+            // get the list of fields the user was part of
+            // by calling removeValue
+            var fields = fieldMap.removeValue(data.username);
 
-            //inputFields.each(
-            // need to do something here with any field where the user might be tagged as editing
+            // foreach the list of fields, and update the related tooltips
+            $.each(fields, function (index, value) {
+                showToolTip(value);
+            });
 
             collidR.log(data.name + " has left this entity.");
         });
+
+        var showToolTip = function (field) {
+            var fieldName = '#' + field;
+
+            if (fieldMap.data[field].length > 0) {
+                var message = 'This field is being edited by:' + fieldMap.data[field].join();
+
+                // set up the tooltip
+                $(fieldName)
+                    .attr('title', message)
+                    .attr('data-trigger', 'manual')
+                    .tooltip('show');
+            }
+            else {
+                // hide the tooltip
+                $(fieldName)
+                    .attr('title', '')
+                    .tooltip('hide');
+            }
+        }
 
     }
 

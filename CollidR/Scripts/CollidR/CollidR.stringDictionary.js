@@ -4,9 +4,7 @@
  * http://github.com/MisterJames/CollidR
  *
  * Copyright James Chambers. All rights reserved.
- * Licensed under the Apache 2.0
- * https://github.com/MisterJames/CollidR/wiki/CollidR-License
- * Applies changes to the page based on the Twitter Bootstrap library
+ * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  */
 (function ($, window) {
     "use strict";
@@ -40,18 +38,33 @@
 
         };
 
+        // attempts to remove the value from all keys
+        this.removeValue = function (value) {
+            var result = new Array();
+            for (var key in this.data) {
+                var values = this.data[key];
+                var index = values.indexOf(value);
+
+                if (index > -1) {
+                    values.splice(index, 1);
+                    result.push(key);
+                }
+            }
+            return result;
+        }
+
         // dumps the entire map to the console
         this.dumpFields = function () {
-            console.debug(this.data);
+            console.log(this.data);
             for (var key in this.data) {
                 var values = this.data[key];
                 for (var index in values) {
                     var msg = key + ':' + values[index];
-                    console.debug(msg);
+                    console.log(msg);
                     $("#foo").append($('<p>').html(msg));
                 }
             }
-            console.debug('-----');
+            console.log('-----');
         }
 
         // checks to see if a value is present in the map
