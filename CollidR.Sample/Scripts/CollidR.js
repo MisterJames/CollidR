@@ -301,7 +301,7 @@
                     .removeClass('alert-success')
                     .addClass('alert-warning');
                 // set the text
-                collidR.autoFormatters.editorsList.html('<span class="glyphicon glyphicon-eye-open"></span> There are currently 2 editors: ' + data.names);
+                collidR.autoFormatters.editorsList.html('<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ' + data.names);
             }
 
         });
