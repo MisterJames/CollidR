@@ -19,7 +19,11 @@ To get it going in your own project you'll need to
 
 You can see how this is done in the intro video above.
 
-** I am preparing a NuGet package which will make most of this happen automatically for you. :) **
+A NuGet package helps put most of the above in place. Just drop into the Package Manager Console and type
+
+    install-package CollidR
+    
+...or check out the package on [Nuget](https://www.nuget.org/packages/CollidR/).
 
 Contributing
 =======
