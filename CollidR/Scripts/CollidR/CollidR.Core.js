@@ -25,7 +25,9 @@
         onExitField: "onExitField",
         onEditorsUpdated: "onEditorsUpdated",
         onEditorDisconnected: "onEditorDisconnected",
-        onEditorConnected: "onEditorConnected"
+        onEditorConnected: "onEditorConnected",
+        onFieldModified: "onFieldModified",
+        onModelSave: "onModelSave"
     };
 
     var log = function (msg, logging) {
@@ -96,6 +98,16 @@
             log(username + " has left this page.");
         });
 
+        hubProxy.on('saveModel', function (username) {
+            $(window).triggerHandler(events.onModelSave, { username: username });
+            log(username + " has saved this entity.");
+        });
+
+        hubProxy.on('modifyField', function (name, field) {
+            $(window).triggerHandler(events.onFieldModified, { field: field, name: name });
+            log(name + " has changed the value of " + field);
+        });
+
         // ==================================================
         // client side methods (to call server)
         // ==================================================
@@ -130,6 +142,18 @@
             }
         }
 
+        function modifyField(element) {
+
+            var fieldId = element.id;
+
+            // no point in sending notifications on unknown fields
+            if (fieldId) {
+                hubProxy.invoke("modifyField", fieldId, settings.entityId, settings.entityType);
+                lastField = "";
+                log("Changed value in " + fieldId + ", sending notification.");
+            }
+        }
+
         // ==================================================
         // public methods
         // ==================================================
@@ -141,8 +165,9 @@
                 log(message, true);
 
                 // wire up form events
-                $(":input").focus(function () { enterField(this) });
-                $(":input").blur(function () { exitField(this) });
+                $(":input").focus(function () { enterField(this); });
+                $(":input").blur(function () { exitField(this); });
+                $(":input").change(function () { modifyField(this); });
             });
 
         };
