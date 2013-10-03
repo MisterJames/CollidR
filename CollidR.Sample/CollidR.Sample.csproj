@@ -370,6 +370,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CollidR.Mvc\CollidR.Mvc.csproj">
+      <Project>{a4b5a7b8-59ba-4f70-9beb-ded6ad14b703}</Project>
+      <Name>CollidR.Mvc</Name>
+    </ProjectReference>
     <ProjectReference Include="..\CollidR\CollidR.csproj">
       <Project>{451343f5-c352-470d-a6f7-169d221279f3}</Project>
       <Name>CollidR</Name>

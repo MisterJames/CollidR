@@ -14,6 +14,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{06FAC3
 		.nuget\NuGet.targets = .nuget\NuGet.targets
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollidR.Mvc", "CollidR.Mvc\CollidR.Mvc.csproj", "{A4B5A7B8-59BA-4F70-9BEB-DED6AD14B703}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -32,6 +34,10 @@ Global
 		{451343F5-C352-470D-A6F7-169D221279F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{451343F5-C352-470D-A6F7-169D221279F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{451343F5-C352-470D-A6F7-169D221279F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4B5A7B8-59BA-4F70-9BEB-DED6AD14B703}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4B5A7B8-59BA-4F70-9BEB-DED6AD14B703}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4B5A7B8-59BA-4F70-9BEB-DED6AD14B703}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4B5A7B8-59BA-4F70-9BEB-DED6AD14B703}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
