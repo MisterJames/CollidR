@@ -15,7 +15,7 @@ namespace CollidR
     {
         private readonly static ModelConnectionMapping<string> _connections = new ModelConnectionMapping<string>();
 
-        public async Task JoinModel(int modelId, string modelType)
+        public async Task JoinModel(string modelId, string modelType)
         {
             var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
@@ -31,7 +31,7 @@ namespace CollidR
 
         }
 
-        public void EnterField(string fieldName, int modelId, string modelType)
+        public void EnterField(string fieldName, string modelId, string modelType)
         {
             var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
@@ -40,7 +40,7 @@ namespace CollidR
 
         }
 
-        public void ExitField(string fieldName, int modelId, string modelType)
+        public void ExitField(string fieldName, string modelId, string modelType)
         {
             var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
@@ -49,7 +49,7 @@ namespace CollidR
 
         }
 
-        public void ModifyField(string fieldName, int modelId, string modelType)
+        public void ModifyField(string fieldName, string modelId, string modelType)
         {
             var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
@@ -57,7 +57,7 @@ namespace CollidR
             Clients.OthersInGroup(groupTag).modifyField(username, fieldName);
         }
 
-        public void SaveModel(int modelId, string modelType)
+        public void SaveModel(string modelId, string modelType)
         {
             var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
@@ -81,7 +81,7 @@ namespace CollidR
             return base.OnDisconnected();
         }
 
-        private static string GenerateGroupTag(int modelId, string modelType)
+        private static string GenerateGroupTag(string modelId, string modelType)
         {
             var groupTag = string.Format("{0}|{1}", modelType, modelId);
             return groupTag;
