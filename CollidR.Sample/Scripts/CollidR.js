@@ -368,7 +368,9 @@
         });
 
         $(window).on(collidR.events.onFieldModified, function (e, data) {
-
+            collidR.autoFormatters.editorsPane.hide();
+            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadWarning.removeClass('hide');
             collidR.log(data.name + " has modified " + data.fieldName);
         });
 
