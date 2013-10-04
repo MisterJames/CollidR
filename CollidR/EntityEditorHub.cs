@@ -15,9 +15,9 @@ namespace CollidR
     {
         private readonly static ModelConnectionMapping<string> _connections = new ModelConnectionMapping<string>();
 
-        public async Task JoinModel(int modelId, string modelType)
+        public async Task JoinModel(string modelId, string modelType)
         {
-            var groupTag = string.Format("{0}|{1}", modelType, modelId);
+            var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
 
             // add the user to the group and track them in the list of connections
@@ -31,30 +31,38 @@ namespace CollidR
 
         }
 
-        public void EnterField(string fieldName, int modelId, string modelType)
+        public void EnterField(string fieldName, string modelId, string modelType)
         {
-            var groupTag = string.Format("{0}|{1}", modelType, modelId);
+            var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
 
             Clients.OthersInGroup(groupTag).enterField(username, fieldName);
 
         }
 
-        public void ExitField(string fieldName, int modelId, string modelType)
+        public void ExitField(string fieldName, string modelId, string modelType)
         {
-            var groupTag = string.Format("{0}|{1}", modelType, modelId);
+            var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
 
             Clients.OthersInGroup(groupTag).ExitField(username, fieldName);
 
         }
 
-        public void ModifyField(string fieldName, int modelId, string modelType)
+        public void ModifyField(string fieldName, string modelId, string modelType)
         {
-            var groupTag = string.Format("{0}|{1}", modelType, modelId);
+            var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
 
             Clients.OthersInGroup(groupTag).modifyField(username, fieldName);
+        }
+
+        public void SaveModel(string modelId, string modelType)
+        {
+            var groupTag = GenerateGroupTag(modelId, modelType);
+            var username = Context.User.Identity.Name;
+
+            Clients.OthersInGroup(groupTag).saveModel(username);
         }
 
         public override Task OnDisconnected()
@@ -73,6 +81,11 @@ namespace CollidR
             return base.OnDisconnected();
         }
 
-
+        private static string GenerateGroupTag(string modelId, string modelType)
+        {
+            var groupTag = string.Format("{0}|{1}", modelType, modelId);
+            return groupTag;
+        }
+        
     }
 }
