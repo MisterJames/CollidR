@@ -367,6 +367,16 @@
             collidR.log(data.name + " has left this entity.");
         });
 
+        $(window).on(collidR.events.onFieldModified, function (e, data) {
+
+            collidR.log(data.name + " has modified " + data.fieldName);
+        });
+
+        $(window).on(collidR.events.onModelSave, function (e, data) {
+
+            collidR.log(data.name + " has saved this entity.");
+        });
+
         var showToolTip = function (field) {
             var fieldName = '#' + field;
 
