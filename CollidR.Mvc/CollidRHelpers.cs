@@ -8,11 +8,25 @@ namespace CollidR.Mvc
 {
     public static class CollidRHelpers
     {
-        public static MvcHtmlString RegisterCollidR<TModel>(this HtmlHelper<TModel> helper, Expression<Func<TModel, int>> expression)
+        /// <summary>
+        /// Register CollidR for the current model using the specified property as an entityId
+        /// </summary>
+        /// <typeparam name="TModel">The model</typeparam>
+        /// <param name="helper"></param>
+        /// <param name="expression">The entity id property</param>
+        /// <param name="includeScript">true to include the required CollidR javascript files; false if the files have been included elsewhere</param>
+        /// <returns></returns>
+        public static MvcHtmlString RegisterCollidR<TModel>(this HtmlHelper<TModel> helper, Expression<Func<TModel, int>> expression, bool includeScript = true)
         {
             PropertyInfo propertyInfo = GetPropertyInfoFromExpression(expression);
             StringBuilder scriptBuilder = new StringBuilder();
-
+        
+            if (includeScript)
+            {
+                UrlHelper urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+                scriptBuilder.AppendFormat("<script src='{0}'></script>", urlHelper.Content("~/Scripts/CollidR.js"));
+            }
+          
             scriptBuilder.AppendLine(@"<script type='text/javascript'>");
             scriptBuilder.AppendLine(@"new $.collidR(");
             scriptBuilder.AppendLine("{");
