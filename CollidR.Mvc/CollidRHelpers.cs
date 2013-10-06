@@ -113,6 +113,9 @@ namespace CollidR.Mvc
             return htmlString;
         }
 
+        /// <summary>
+        /// Writes out an editor pane with Bootstrap styling.
+        /// </summary>
         public static MvcHtmlString CollidREditorPane(this HtmlHelper helper)
         {
             StringBuilder scriptBuilder = new StringBuilder();
@@ -124,6 +127,23 @@ namespace CollidR.Mvc
             var htmlString = scriptBuilder.ToString();
             return new MvcHtmlString(htmlString);
         }
+
+        /// <summary>
+        /// Writes out a CollidR alert area with Bootstrap styling.
+        /// </summary>
+        public static MvcHtmlString CollidRAlertArea(this HtmlHelper helper)
+        {
+            StringBuilder scriptBuilder = new StringBuilder();
+
+            scriptBuilder.AppendLine("<div class='alert alert-danger hide' data-collidr='reloadWarning'>");
+            scriptBuilder.AppendLine("    <span data-collidr='reloadEditor'></span> has edited this record. You may wish to reload.");
+            scriptBuilder.AppendLine("</div>");
+
+            var htmlString = scriptBuilder.ToString();
+            return new MvcHtmlString(htmlString);
+        }
+
+
 
         private static PropertyInfo GetPropertyInfoFromExpression<T, T2>(Expression<Func<T, T2>> expression)
         {
