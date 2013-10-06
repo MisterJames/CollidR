@@ -384,11 +384,13 @@
 
             if (fieldMap.data[field].length > 0) {
                 var message = 'This field is being edited by:' + fieldMap.data[field].join();
+                console.log(message);
 
                 // set up the tooltip
                 $(fieldName)
                     .attr('title', message)
                     .attr('data-trigger', 'manual')
+                    .tooltip('fixTitle')
                     .tooltip('show');
             }
             else {
