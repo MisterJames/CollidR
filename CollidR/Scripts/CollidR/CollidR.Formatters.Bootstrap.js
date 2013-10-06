@@ -37,7 +37,7 @@
                     .removeClass('alert-success')
                     .addClass('alert-warning');
                 // set the text
-                collidR.autoFormatters.editorsList.html('<span class="glyphicon glyphicon-eye-open"></span> There are currently 2 editors: ' + data.names);
+                collidR.autoFormatters.editorsList.html('<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ' + data.names);
             }
 
         });
@@ -76,16 +76,30 @@
             collidR.log(data.name + " has left this entity.");
         });
 
+        $(window).on(collidR.events.onFieldModified, function (e, data) {
+            collidR.autoFormatters.editorsPane.hide();
+            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadWarning.removeClass('hide');
+            collidR.log(data.name + " has modified " + data.fieldName);
+        });
+
+        $(window).on(collidR.events.onModelSave, function (e, data) {
+
+            collidR.log(data.name + " has saved this entity.");
+        });
+
         var showToolTip = function (field) {
             var fieldName = '#' + field;
 
             if (fieldMap.data[field].length > 0) {
                 var message = 'This field is being edited by:' + fieldMap.data[field].join();
+                console.log(message);
 
                 // set up the tooltip
                 $(fieldName)
                     .attr('title', message)
                     .attr('data-trigger', 'manual')
+                    .tooltip('fixTitle')
                     .tooltip('show');
             }
             else {

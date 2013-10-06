@@ -186,7 +186,9 @@
     // ==================================================
     var autoFormatters = {
         editorsPane: $('[data-collidR="editorsPane"]'),
-        editorsList: $('[data-collidR="editorsList"]')
+        editorsList: $('[data-collidR="editorsList"]'),
+        reloadEditor: $('[data-collidR="reloadEditor"]'),
+        reloadWarning: $('[data-collidR="reloadWarning"]')
     };
 
     $.collidR.prototype.events = events;
@@ -365,16 +367,30 @@
             collidR.log(data.name + " has left this entity.");
         });
 
+        $(window).on(collidR.events.onFieldModified, function (e, data) {
+            collidR.autoFormatters.editorsPane.hide();
+            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadWarning.removeClass('hide');
+            collidR.log(data.name + " has modified " + data.fieldName);
+        });
+
+        $(window).on(collidR.events.onModelSave, function (e, data) {
+
+            collidR.log(data.name + " has saved this entity.");
+        });
+
         var showToolTip = function (field) {
             var fieldName = '#' + field;
 
             if (fieldMap.data[field].length > 0) {
                 var message = 'This field is being edited by:' + fieldMap.data[field].join();
+                console.log(message);
 
                 // set up the tooltip
                 $(fieldName)
                     .attr('title', message)
                     .attr('data-trigger', 'manual')
+                    .tooltip('fixTitle')
                     .tooltip('show');
             }
             else {
