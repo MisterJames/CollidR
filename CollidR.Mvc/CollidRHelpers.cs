@@ -8,26 +8,112 @@ namespace CollidR.Mvc
 {
     public static class CollidRHelpers
     {
-        public static MvcHtmlString RegisterCollidR<TModel>(this HtmlHelper<TModel> helper, Expression<Func<TModel, int>> expression)
+        /// <summary>
+        /// Register CollidR for the current model using the specified property as an entityId
+        /// </summary>
+        /// <typeparam name="TModel">The model</typeparam>
+        /// <param name="helper"></param>
+        /// <param name="expression">The entity id property</param>
+        /// <param name="includeScript">true to include the required CollidR javascript files; false if the files have been included elsewhere</param>
+        /// <returns></returns>
+        public static MvcHtmlString RegisterCollidRFor<TModel>(this HtmlHelper<TModel> helper, Expression<Func<TModel, int>> expression, bool includeScript = true)
         {
             PropertyInfo propertyInfo = GetPropertyInfoFromExpression(expression);
+            
+            string entityTypeName = typeof(TModel).FullName;
+            object entityIdValue = propertyInfo.GetValue(helper.ViewData.Model);
+          
+
+            var htmlString = GetRegiserCollidRHtmlString(helper, includeScript, entityTypeName, entityIdValue);
+            return new MvcHtmlString(htmlString);
+        }
+
+        /// <summary>
+        /// Register CollidR for the current model using the specified property as an entityId
+        /// </summary>
+        /// <typeparam name="TModel">The model</typeparam>
+        /// <param name="helper"></param>
+        /// <param name="expression">The entity id property</param>
+        /// <param name="includeScript">true to include the required CollidR javascript files; false if the files have been included elsewhere</param>
+        /// <returns></returns>
+        public static MvcHtmlString RegisterCollidRFor<TModel>(this HtmlHelper<TModel> helper, Expression<Func<TModel, string>> expression, bool includeScript = true)
+        {
+            PropertyInfo propertyInfo = GetPropertyInfoFromExpression(expression);
+
+            string entityTypeName = typeof(TModel).FullName;
+            object entityIdValue = propertyInfo.GetValue(helper.ViewData.Model);
+
+
+            var htmlString = GetRegiserCollidRHtmlString(helper, includeScript, entityTypeName, entityIdValue);
+            return new MvcHtmlString(htmlString);
+        }
+
+        /// <summary>
+        /// Register CollidR for the current model using the specified property as an entityId
+        /// </summary>
+        /// <typeparam name="TModel">The model</typeparam>
+        /// <param name="helper"></param>
+        /// <param name="expression">The entity id property</param>
+        /// <param name="includeScript">true to include the required CollidR javascript files; false if the files have been included elsewhere</param>
+        /// <returns></returns>
+        public static MvcHtmlString RegisterCollidRFor<TModel>(this HtmlHelper<TModel> helper, Expression<Func<TModel, Guid>> expression, bool includeScript = true)
+        {
+            PropertyInfo propertyInfo = GetPropertyInfoFromExpression(expression);
+
+            string entityTypeName = typeof(TModel).FullName;
+            object entityIdValue = propertyInfo.GetValue(helper.ViewData.Model);
+            
+            var htmlString = GetRegiserCollidRHtmlString(helper, includeScript, entityTypeName, entityIdValue);
+            return new MvcHtmlString(htmlString);
+        }
+
+        /// <summary>
+        /// Register CollidR for the current model using the specified property as an entityId
+        /// </summary>
+        /// <typeparam name="TModel">The model</typeparam>
+        /// <param name="helper"></param>
+        /// <param name="expression">The entity id property</param>
+        /// <param name="includeScript">true to include the required CollidR javascript files; false if the files have been included elsewhere</param>
+        /// <returns></returns>
+        public static MvcHtmlString RegisterCollidRFor<TModel>(this HtmlHelper<TModel> helper, Expression<Func<TModel, long>> expression, bool includeScript = true)
+        {
+            PropertyInfo propertyInfo = GetPropertyInfoFromExpression(expression);
+
+            string entityTypeName = typeof(TModel).FullName;
+            object entityIdValue = propertyInfo.GetValue(helper.ViewData.Model);
+
+
+            var htmlString = GetRegiserCollidRHtmlString(helper, includeScript, entityTypeName, entityIdValue);
+            return new MvcHtmlString(htmlString);
+        }
+
+        private static string GetRegiserCollidRHtmlString<TModel>(HtmlHelper<TModel> helper, bool includeScript, string entityTypeName, object entityIdValue)
+        {
             StringBuilder scriptBuilder = new StringBuilder();
+            if (includeScript)
+            {
+                UrlHelper urlHelper = new UrlHelper(helper.ViewContext.RequestContext);
+                scriptBuilder.AppendFormat("<script src='{0}'></script>", urlHelper.Content("~/Scripts/CollidR.js"));
+            }
 
             scriptBuilder.AppendLine(@"<script type='text/javascript'>");
             scriptBuilder.AppendLine(@"new $.collidR(");
             scriptBuilder.AppendLine("{");
-            scriptBuilder.AppendFormat("entityType: '{0}',", typeof(TModel).FullName);
+
+            scriptBuilder.AppendFormat("entityType: '{0}',", entityTypeName);
             scriptBuilder.AppendLine();
-            scriptBuilder.AppendFormat("entityId: {0}", propertyInfo.GetValue(helper.ViewData.Model));
+
+            scriptBuilder.AppendFormat("entityId: '{0}'", entityIdValue);
             scriptBuilder.AppendLine();
             scriptBuilder.AppendLine("})");
             scriptBuilder.AppendLine(".registerClient();");
 
             scriptBuilder.Append(@"</script>");
-            return new MvcHtmlString(scriptBuilder.ToString());
+            string htmlString = scriptBuilder.ToString();
+            return htmlString;
         }
 
-        private static PropertyInfo GetPropertyInfoFromExpression<T>(Expression<Func<T, int>> expression)
+        private static PropertyInfo GetPropertyInfoFromExpression<T, T2>(Expression<Func<T, T2>> expression)
         {
             MemberExpression member = expression.Body as MemberExpression;
             if (member == null)
