@@ -186,7 +186,9 @@
     // ==================================================
     var autoFormatters = {
         editorsPane: $('[data-collidR="editorsPane"]'),
-        editorsList: $('[data-collidR="editorsList"]')
+        editorsList: $('[data-collidR="editorsList"]'),
+        reloadEditor: $('[data-collidR="reloadEditor"]'),
+        reloadWarning: $('[data-collidR="reloadWarning"]')
     };
 
     $.collidR.prototype.events = events;
