@@ -113,6 +113,18 @@ namespace CollidR.Mvc
             return htmlString;
         }
 
+        public static MvcHtmlString CollidREditorPane(this HtmlHelper helper)
+        {
+            StringBuilder scriptBuilder = new StringBuilder();
+
+            scriptBuilder.AppendLine("<div class='alert alert-success' data-collidr='editorsPane'>");
+            scriptBuilder.AppendLine("    <span data-collidr='editorsList'></span>");
+            scriptBuilder.AppendLine("</div>");
+
+            var htmlString = scriptBuilder.ToString();
+            return new MvcHtmlString(htmlString);
+        }
+
         private static PropertyInfo GetPropertyInfoFromExpression<T, T2>(Expression<Func<T, T2>> expression)
         {
             MemberExpression member = expression.Body as MemberExpression;
