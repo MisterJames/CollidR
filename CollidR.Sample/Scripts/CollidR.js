@@ -186,7 +186,9 @@
     // ==================================================
     var autoFormatters = {
         editorsPane: $('[data-collidR="editorsPane"]'),
-        editorsList: $('[data-collidR="editorsList"]')
+        editorsList: $('[data-collidR="editorsList"]'),
+        reloadEditor: $('[data-collidR="reloadEditor"]'),
+        reloadWarning: $('[data-collidR="reloadWarning"]')
     };
 
     $.collidR.prototype.events = events;
@@ -363,6 +365,18 @@
             });
 
             collidR.log(data.name + " has left this entity.");
+        });
+
+        $(window).on(collidR.events.onFieldModified, function (e, data) {
+            collidR.autoFormatters.editorsPane.hide();
+            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadWarning.removeClass('hide');
+            collidR.log(data.name + " has modified " + data.fieldName);
+        });
+
+        $(window).on(collidR.events.onModelSave, function (e, data) {
+
+            collidR.log(data.name + " has saved this entity.");
         });
 
         var showToolTip = function (field) {
