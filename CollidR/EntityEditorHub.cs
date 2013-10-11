@@ -49,12 +49,12 @@ namespace CollidR
 
         }
 
-        public void ModifyField(string fieldName, string modelId, string modelType)
+        public void ModifyField(string fieldName, string modelId, string modelType, string newValue)
         {
             var groupTag = GenerateGroupTag(modelId, modelType);
             var username = Context.User.Identity.Name;
 
-            Clients.OthersInGroup(groupTag).modifyField(username, fieldName);
+            Clients.OthersInGroup(groupTag).modifyField(username, fieldName, newValue);
         }
 
         public void SaveModel(string modelId, string modelType)
