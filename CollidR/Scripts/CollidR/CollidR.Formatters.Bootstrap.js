@@ -1,4 +1,5 @@
-﻿/* CollidR.BootstrapFormatter.js */
+﻿
+/* CollidR.BootstrapFormatter.js */
 /*
  * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
@@ -80,7 +81,10 @@
             collidR.autoFormatters.editorsPane.hide();
             collidR.autoFormatters.reloadEditor.html(data.name);
             collidR.autoFormatters.reloadWarning.removeClass('hide');
-            collidR.log(data.name + " has modified " + data.fieldName);
+
+            // this is where we'll do something interesting with the data (shadow
+            collidR.log(data.name + " has changed " + data.field + " to " + data.value);
+
         });
 
         $(window).on(collidR.events.onModelSave, function (e, data) {

@@ -103,9 +103,9 @@
             log(username + " has saved this entity.");
         });
 
-        hubProxy.on('modifyField', function (name, field) {
-            $(window).triggerHandler(events.onFieldModified, { field: field, name: name });
-            log(name + " has changed the value of " + field);
+        hubProxy.on('modifyField', function (name, field, value) {
+            $(window).triggerHandler(events.onFieldModified, { field: field, name: name, value: value });
+            log(name + " has changed the value of " + field + " to " + value);
         });
 
         // ==================================================
@@ -148,7 +148,7 @@
 
             // no point in sending notifications on unknown fields
             if (fieldId) {
-                hubProxy.invoke("modifyField", fieldId, settings.entityId, settings.entityType);
+                hubProxy.invoke("modifyField", fieldId, settings.entityId, settings.entityType, element.value);
                 lastField = "";
                 log("Changed value in " + fieldId + ", sending notification.");
             }
