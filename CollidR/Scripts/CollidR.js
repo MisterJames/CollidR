@@ -288,7 +288,6 @@
     };
 }(window.jQuery, window));
 
-
 /* CollidR.BootstrapFormatter.js */
 /*
  * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
@@ -308,6 +307,7 @@
         // we only wire up for Bootstrap if it's loaded
         var collidR = new $.collidR;
         var fieldMap = new $.stringDictionary();
+        var shadowingUser = null;
 
         $(window).on(collidR.events.onEditorsUpdated, function (e, data) {
             collidR.log("Editors updated with: " + data.names);
@@ -328,9 +328,32 @@
                     .removeClass('alert-success')
                     .addClass('alert-warning');
                 // set the text
-                collidR.autoFormatters.editorsList.html('<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ' + data.names);
+                var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ';
+                users.forEach(function (user) {
+                    var trimmedUser = user.replace(' ', '');
+                    warningText += trimmedUser + '(<a href="#" class="shadowUser" data-collidr-username="' + trimmedUser + '">shadow</a>) ';
+                });
+                collidR.autoFormatters.editorsList.html(warningText);
             }
 
+        });
+
+        $(collidR.autoFormatters.editorsPane).on("click", "a.shadowUser", function () {
+            var userName = $(this).attr('data-collidr-username');
+            collidR.log("Shadowing " + userName);
+            $(this).removeClass(".shadowUser")
+                .addClass(".unshadowUser");
+            shadowingUser = userName;
+            $(":input[type!='hidden'][type!='submit']")
+                .each(function (index, element) {
+                    $(element).clone()
+                        .attr("id", $(element).attr("id") + "_" + userName)
+                        .attr("name", "")
+                        .addClass("shadow")
+                        .attr('readonly', true)
+                        .css('opacity', 0.5) //Would be better to do this in a CollidR.css file so people can customize the styling
+                        .insertAfter($(element));
+                });
         });
 
         $(window).on(collidR.events.onEnterField, function (e, data) {
@@ -374,6 +397,9 @@
 
             // this is where we'll do something interesting with the data (shadow
             collidR.log(data.name + " has changed " + data.field + " to " + data.value);
+            if (shadowingUser == data.name) {
+                $("#" + data.field + "_" + data.name).val(data.value);
+            }
 
         });
 
