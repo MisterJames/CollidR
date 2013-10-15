@@ -187,6 +187,8 @@
     var autoFormatters = {
         editorsPane: $('[data-collidR="editorsPane"]'),
         editorsList: $('[data-collidR="editorsList"]'),
+        shadowUserPane: $('[data-collidR="shadowUserPane"]'),
+        shadowUserName: $('[data-collidR="shadowUserName"]'),
         reloadEditor: $('[data-collidR="reloadEditor"]'),
         reloadWarning: $('[data-collidR="reloadWarning"]')
     };
