@@ -27,7 +27,8 @@
         onEditorDisconnected: "onEditorDisconnected",
         onEditorConnected: "onEditorConnected",
         onFieldModified: "onFieldModified",
-        onModelSave: "onModelSave"
+        onModelSave: "onModelSave",
+        onRegistrationComplete: "onRegistrationComplete"
     };
 
     var log = function (msg, logging) {
@@ -64,6 +65,12 @@
         var connection = $.hubConnection();
         var hubName = 'CollidRHub';
         var hubProxy = connection.createHubProxy(hubName);
+
+        // ==================================================
+        // public properties
+        // ==================================================
+        //this.currentUser = '';
+        //this.getCurrentUser = function () { return this.currentUser; };
 
         // ==================================================
         // client side methods (called from server)
@@ -106,6 +113,20 @@
         hubProxy.on('modifyField', function (name, field, value) {
             $(window).triggerHandler(events.onFieldModified, { field: field, name: name, value: value });
             log(name + " has changed the value of " + field + " to " + value);
+        });
+
+        hubProxy.on('registrationComplete', function (username, hasChanges) {
+            $(window).triggerHandler(events.onRegistrationComplete, { username: username, hasChanges: hasChanges });
+            log(username + " has successfully registered for this entity.");
+
+            // capture current user 
+            this._currentUser = username;
+
+            // hook for catching up when user joins after edits
+            if (hasChanges) {
+                log("There are outstanding changes for this entity...");
+
+            }
         });
 
         // ==================================================
@@ -169,7 +190,6 @@
                 $(":input").blur(function () { exitField(this); });
                 $(":input").change(function () { modifyField(this); });
             });
-
         };
 
         // ==================================================
@@ -191,9 +211,16 @@
         reloadWarning: $('[data-collidR="reloadWarning"]')
     };
 
+    Object.defineProperty($.collidR.prototype, "currentUser", {
+        get: function () {
+            return this._currentUser ? this._currentUser : "";
+        }
+    });
+
     $.collidR.prototype.events = events;
     $.collidR.prototype.log = log;
     $.collidR.prototype.autoFormatters = autoFormatters;
+
 
 }(window.jQuery, window));
 
@@ -288,7 +315,6 @@
     };
 }(window.jQuery, window));
 
-
 /* CollidR.BootstrapFormatter.js */
 /*
  * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
@@ -328,25 +354,32 @@
                 collidR.autoFormatters.editorsPane
                     .removeClass('alert-success')
                     .addClass('alert-warning');
+
                 // set the text
                 var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ';
                 users.forEach(function (user) {
                     var trimmedUser = user.replace(' ', '');
-                    warningText += trimmedUser + '(<a href="#" class="shadowUser" data-collidr-username="' + trimmedUser + '">shadow</a>) ';
+                    warningText += trimmedUser;
+
+                    // can't shadow yourself
+                    var currentUser = collidR.currentUser;
+                    if (user != currentUser) {
+                        warningText += '(<a href="#" class="shadowUser" data-collidr-username="' + trimmedUser + '">shadow</a>) ';
+                    }
                 });
                 collidR.autoFormatters.editorsList.html(warningText);
             }
 
         });
 
-        $(collidR.autoFormatters.editorsPane).on("click", "a.shadowUser", function() {
+        $(collidR.autoFormatters.editorsPane).on("click", "a.shadowUser", function () {
             var userName = $(this).attr('data-collidr-username');
             collidR.log("Shadowing " + userName);
             $(this).removeClass(".shadowUser")
                 .addClass(".unshadowUser");
             shadowingUser = userName;
             $(":input[type!='hidden'][type!='submit']")
-                .each(function(index, element) {
+                .each(function (index, element) {
                     $(element).clone()
                         .attr("id", $(element).attr("id") + "_" + userName)
                         .attr("name", "")
