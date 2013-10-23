@@ -122,6 +122,10 @@ namespace CollidR.Mvc
 
             scriptBuilder.AppendLine("<div class='alert alert-success' data-collidr='editorsPane'>");
             scriptBuilder.AppendLine("    <span data-collidr='editorsList'></span>");
+
+            scriptBuilder.AppendLine("    <div data-collidr='shadowUserPane' class='hide'>");
+            scriptBuilder.AppendLine("        Shadowing <span data-collidr='shadowUserName'></span>'s changes. (<a href='#' class='alert-link' data-collidr='removeShadow'>remove</a>)");
+            scriptBuilder.AppendLine("     </div>");
             scriptBuilder.AppendLine("</div>");
 
             var htmlString = scriptBuilder.ToString();

@@ -207,6 +207,8 @@
     var autoFormatters = {
         editorsPane: $('[data-collidR="editorsPane"]'),
         editorsList: $('[data-collidR="editorsList"]'),
+        shadowUserPane: $('[data-collidR="shadowUserPane"]'),
+        shadowUserName: $('[data-collidR="shadowUserName"]'),
         reloadEditor: $('[data-collidR="reloadEditor"]'),
         reloadWarning: $('[data-collidR="reloadWarning"]')
     };
@@ -357,7 +359,8 @@
 
                 // set the text
                 var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ';
-                users.forEach(function (user) {
+
+                users.forEach(function (user, index) {
                     var trimmedUser = user.replace(' ', '');
                     warningText += trimmedUser;
 
@@ -372,12 +375,15 @@
 
         });
 
-        $(collidR.autoFormatters.editorsPane).on("click", "a.shadowUser", function () {
+        $(collidR.autoFormatters.editorsPane).on("click", "span.shadowUser", function() {
             var userName = $(this).attr('data-collidr-username');
             collidR.log("Shadowing " + userName);
             $(this).removeClass(".shadowUser")
                 .addClass(".unshadowUser");
             shadowingUser = userName;
+            collidR.autoFormatters.shadowUserName.html(shadowingUser);
+            collidR.autoFormatters.shadowUserPane.removeClass("hide");
+            $(":input.shadow").remove();
             $(":input[type!='hidden'][type!='submit']")
                 .each(function (index, element) {
                     $(element).clone()
@@ -385,9 +391,15 @@
                         .attr("name", "")
                         .addClass("shadow")
                         .attr('readonly', true)
-                        .css('opacity', 0.5) //Would be better to do this in a CollidR.css file so people can customize the styling
+
+                        .css('opacity', 0.5) //TODO: Would be better to do this in a CollidR.css file so people can customize the styling
                         .insertAfter($(element));
                 });
+        });
+
+        
+        $(collidR.autoFormatters.shadowUserPane).on("click", "a[data-collidr='removeShadow']", function () {
+            removeCurrentShadow();
         });
 
         $(window).on(collidR.events.onEnterField, function (e, data) {
@@ -408,7 +420,7 @@
         });
 
         $(window).on(collidR.events.onEditorConnected, function (e, data) {
-            collidR.log(data.name + " has joined this entity.");
+            collidR.log(data.username + " has joined this entity.");
         });
 
         $(window).on(collidR.events.onEditorDisconnected, function (e, data) {
@@ -421,13 +433,14 @@
                 showToolTip(value);
             });
 
-            collidR.log(data.name + " has left this entity.");
+            collidR.log(data.username + " has left this entity.");
+            if (shadowingUser == data.username){
+                removeCurrentShadow();
+            }
         });
 
         $(window).on(collidR.events.onFieldModified, function (e, data) {
-            collidR.autoFormatters.editorsPane.hide();
-            collidR.autoFormatters.reloadEditor.html(data.name);
-            collidR.autoFormatters.reloadWarning.removeClass('hide');
+
 
             // this is where we'll do something interesting with the data (shadow
             collidR.log(data.name + " has changed " + data.field + " to " + data.value);
@@ -438,16 +451,22 @@
         });
 
         $(window).on(collidR.events.onModelSave, function (e, data) {
-
+            collidR.autoFormatters.editorsPane.hide();
+            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadWarning.removeClass('hide');
             collidR.log(data.name + " has saved this entity.");
         });
+
+        var removeCurrentShadow = function () {
+            $(":input.shadow").remove();
+            $(collidR.autoFormatters.shadowUserPane).addClass("hide");
+        };
 
         var showToolTip = function (field) {
             var fieldName = '#' + field;
 
             if (fieldMap.data[field].length > 0) {
                 var message = 'This field is being edited by:' + fieldMap.data[field].join();
-                console.log(message);
 
                 // set up the tooltip
                 $(fieldName)
