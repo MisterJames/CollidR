@@ -24,10 +24,16 @@ namespace CollidR
             await Groups.Add(Context.ConnectionId, groupTag);
             _connections.Add(groupTag, username);
 
+            // complete registration
+            var hasChanges = false; // hook for tracking changes
+            await Clients.Caller.registrationComplete(username, hasChanges);
+
+
             // send the list of editors to all in the group
             var users = _connections.GetConnections(groupTag);
             Clients.Group(groupTag).updateEditorList(string.Join(", ", users));
             Clients.Group(groupTag).editorConnected(username);
+
 
         }
 

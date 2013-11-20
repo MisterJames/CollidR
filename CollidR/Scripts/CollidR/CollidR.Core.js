@@ -27,7 +27,8 @@
         onEditorDisconnected: "onEditorDisconnected",
         onEditorConnected: "onEditorConnected",
         onFieldModified: "onFieldModified",
-        onModelSave: "onModelSave"
+        onModelSave: "onModelSave",
+        onRegistrationComplete: "onRegistrationComplete"
     };
 
     var log = function (msg, logging) {
@@ -64,6 +65,8 @@
         var connection = $.hubConnection();
         var hubName = 'CollidRHub';
         var hubProxy = connection.createHubProxy(hubName);
+        var currentUser = '';
+
 
         // ==================================================
         // client side methods (called from server)
@@ -106,6 +109,20 @@
         hubProxy.on('modifyField', function (name, field, value) {
             $(window).triggerHandler(events.onFieldModified, { field: field, name: name, value: value });
             log(name + " has changed the value of " + field + " to " + value);
+        });
+
+        hubProxy.on('registrationComplete', function (username, hasChanges) {
+            $(window).triggerHandler(events.onRegistrationComplete, { username: username, hasChanges: hasChanges });
+            log(username + " has successfully registered for this entity.");
+
+            // capture current user 
+            $.collidR.currentUser = username;
+
+            // hook for catching up when user joins after edits
+            if (hasChanges) {
+                log("There are outstanding changes for this entity...");
+
+            }
         });
 
         // ==================================================
@@ -154,6 +171,14 @@
             }
         }
 
+        function saveModel() {
+            hubProxy.invoke("SaveModel", settings.entityId, settings.entityType);
+        }
+
+        function reloadPage() {
+            window.location = window.location;
+        }
+
         // ==================================================
         // public methods
         // ==================================================
@@ -168,8 +193,9 @@
                 $(":input").focus(function () { enterField(this); });
                 $(":input").blur(function () { exitField(this); });
                 $(":input").change(function () { modifyField(this); });
+                $('[data-collidR="reloadCommand"]').click(function () { reloadPage(); });
+                $("form").submit(function () { saveModel(); });
             });
-
         };
 
         // ==================================================
@@ -187,12 +213,16 @@
     var autoFormatters = {
         editorsPane: $('[data-collidR="editorsPane"]'),
         editorsList: $('[data-collidR="editorsList"]'),
+        shadowUserPane: $('[data-collidR="shadowUserPane"]'),
+        shadowUserName: $('[data-collidR="shadowUserName"]'),
         reloadEditor: $('[data-collidR="reloadEditor"]'),
-        reloadWarning: $('[data-collidR="reloadWarning"]')
+        reloadWarning: $('[data-collidR="reloadWarning"]'),
+        reloadCommand: $('[data-collidR="reloadCommand"]')
     };
 
     $.collidR.prototype.events = events;
     $.collidR.prototype.log = log;
     $.collidR.prototype.autoFormatters = autoFormatters;
+
 
 }(window.jQuery, window));
