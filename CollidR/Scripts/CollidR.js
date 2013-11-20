@@ -67,6 +67,7 @@
         var hubProxy = connection.createHubProxy(hubName);
         var currentUser = '';
 
+
         // ==================================================
         // client side methods (called from server)
         // ==================================================
@@ -111,11 +112,11 @@
         });
 
         hubProxy.on('registrationComplete', function (username, hasChanges) {
-            $(window).triggerHandler(events.onFieldModified, { username: username, hasChanges: hasChanges });
+            $(window).triggerHandler(events.onRegistrationComplete, { username: username, hasChanges: hasChanges });
             log(username + " has successfully registered for this entity.");
 
-            // capture current user
-            this.currentUser = username;
+            // capture current user 
+            $.collidR.currentUser = username;
 
             // hook for catching up when user joins after edits
             if (hasChanges) {
@@ -170,6 +171,14 @@
             }
         }
 
+        function saveModel() {
+            hubProxy.invoke("SaveModel", settings.entityId, settings.entityType);
+        }
+
+        function reloadPage() {
+            window.location = window.location;
+        }
+
         // ==================================================
         // public methods
         // ==================================================
@@ -184,8 +193,9 @@
                 $(":input").focus(function () { enterField(this); });
                 $(":input").blur(function () { exitField(this); });
                 $(":input").change(function () { modifyField(this); });
+                $('[data-collidR="reloadCommand"]').click(function () { reloadPage(); });
+                $("form").submit(function () { saveModel(); });
             });
-
         };
 
         // ==================================================
@@ -206,12 +216,14 @@
         shadowUserPane: $('[data-collidR="shadowUserPane"]'),
         shadowUserName: $('[data-collidR="shadowUserName"]'),
         reloadEditor: $('[data-collidR="reloadEditor"]'),
-        reloadWarning: $('[data-collidR="reloadWarning"]')
+        reloadWarning: $('[data-collidR="reloadWarning"]'),
+        reloadCommand: $('[data-collidR="reloadCommand"]')
     };
 
     $.collidR.prototype.events = events;
     $.collidR.prototype.log = log;
     $.collidR.prototype.autoFormatters = autoFormatters;
+
 
 }(window.jQuery, window));
 
@@ -306,7 +318,6 @@
     };
 }(window.jQuery, window));
 
-
 /* CollidR.BootstrapFormatter.js */
 /*
  * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
@@ -348,13 +359,18 @@
                     .addClass('alert-warning');
 
                 // set the text
-                var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ';
+                var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors, you and: ';
                 users.forEach(function (user, index) {
+
                     var trimmedUser = user.replace(' ', '');
-                    warningText += trimmedUser + ' <span href="#" style="cursor:pointer" class="shadowUser glyphicon glyphicon-eye-open alert-link" data-collidr-username="' + trimmedUser + '" title="Show ' + trimmedUser + '\'s changes"></span> ';
-                    if (index != users.length - 1) {
-                        warningText += ', ';
+
+                    if (trimmedUser != $.collidR.currentUser) {
+                        warningText += trimmedUser + ' <span href="#" style="cursor:pointer" class="shadowUser glyphicon glyphicon-eye-open alert-link" data-collidr-username="' + trimmedUser + '" title="Show ' + trimmedUser + '\'s changes"></span> ';
+                        if (index != users.length - 1) {
+                            warningText += ' ';
+                        }
                     }
+
                 });
                 collidR.autoFormatters.editorsList.html(warningText);
             }
@@ -377,6 +393,7 @@
                         .attr("name", "")
                         .addClass("shadow")
                         .attr('readonly', true)
+
                         .css('opacity', 0.5) //TODO: Would be better to do this in a CollidR.css file so people can customize the styling
                         .insertAfter($(element));
                 });
@@ -437,9 +454,9 @@
 
         $(window).on(collidR.events.onModelSave, function (e, data) {
             collidR.autoFormatters.editorsPane.hide();
-            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadEditor.html(data.username);
             collidR.autoFormatters.reloadWarning.removeClass('hide');
-            collidR.log(data.name + " has saved this entity.");
+            collidR.log(data.username + " has saved this entity.");
         });
 
         var removeCurrentShadow = function () {

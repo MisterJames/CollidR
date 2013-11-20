@@ -140,7 +140,7 @@ namespace CollidR.Mvc
             StringBuilder scriptBuilder = new StringBuilder();
 
             scriptBuilder.AppendLine("<div class='alert alert-danger hide' data-collidr='reloadWarning'>");
-            scriptBuilder.AppendLine("    <span data-collidr='reloadEditor'></span> has edited this record. You may wish to reload.");
+            scriptBuilder.AppendLine("    <span data-collidr='reloadEditor'></span> has edited this record. You may wish to <button type='button' class='btn btn-danger btn-small' data-collidr='reloadCommand'>Reload</button>.");
             scriptBuilder.AppendLine("</div>");
 
             var htmlString = scriptBuilder.ToString();

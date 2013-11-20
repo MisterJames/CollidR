@@ -65,12 +65,8 @@
         var connection = $.hubConnection();
         var hubName = 'CollidRHub';
         var hubProxy = connection.createHubProxy(hubName);
+        var currentUser = '';
 
-        // ==================================================
-        // public properties
-        // ==================================================
-        //this.currentUser = '';
-        //this.getCurrentUser = function () { return this.currentUser; };
 
         // ==================================================
         // client side methods (called from server)
@@ -120,7 +116,7 @@
             log(username + " has successfully registered for this entity.");
 
             // capture current user 
-            this._currentUser = username;
+            $.collidR.currentUser = username;
 
             // hook for catching up when user joins after edits
             if (hasChanges) {
@@ -175,6 +171,14 @@
             }
         }
 
+        function saveModel() {
+            hubProxy.invoke("SaveModel", settings.entityId, settings.entityType);
+        }
+
+        function reloadPage() {
+            window.location = window.location;
+        }
+
         // ==================================================
         // public methods
         // ==================================================
@@ -189,6 +193,8 @@
                 $(":input").focus(function () { enterField(this); });
                 $(":input").blur(function () { exitField(this); });
                 $(":input").change(function () { modifyField(this); });
+                $('[data-collidR="reloadCommand"]').click(function () { reloadPage(); });
+                $("form").submit(function () { saveModel(); });
             });
         };
 
@@ -210,14 +216,9 @@
         shadowUserPane: $('[data-collidR="shadowUserPane"]'),
         shadowUserName: $('[data-collidR="shadowUserName"]'),
         reloadEditor: $('[data-collidR="reloadEditor"]'),
-        reloadWarning: $('[data-collidR="reloadWarning"]')
-    };
-
-    Object.defineProperty($.collidR.prototype, "currentUser", {
-        get: function () {
-            return this._currentUser ? this._currentUser : "";
-        }
-    });
+        reloadWarning: $('[data-collidR="reloadWarning"]'),
+        reloadCommand: $('[data-collidR="reloadCommand"]')
+};
 
     $.collidR.prototype.events = events;
     $.collidR.prototype.log = log;
@@ -358,17 +359,18 @@
                     .addClass('alert-warning');
 
                 // set the text
-                var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ';
-
+                var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors, you and: ';
                 users.forEach(function (user, index) {
-                    var trimmedUser = user.replace(' ', '');
-                    warningText += trimmedUser;
 
-                    // can't shadow yourself
-                    var currentUser = collidR.currentUser;
-                    if (user != currentUser) {
-                        warningText += '(<a href="#" class="shadowUser" data-collidr-username="' + trimmedUser + '">shadow</a>) ';
+                    var trimmedUser = user.replace(' ', '');
+
+                    if (trimmedUser != $.collidR.currentUser) {
+                        warningText += trimmedUser + ' <span href="#" style="cursor:pointer" class="shadowUser glyphicon glyphicon-eye-open alert-link" data-collidr-username="' + trimmedUser + '" title="Show ' + trimmedUser + '\'s changes"></span> ';
+                        if (index != users.length - 1) {
+                            warningText += ' ';
+                        }
                     }
+
                 });
                 collidR.autoFormatters.editorsList.html(warningText);
             }
@@ -452,9 +454,9 @@
 
         $(window).on(collidR.events.onModelSave, function (e, data) {
             collidR.autoFormatters.editorsPane.hide();
-            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadEditor.html(data.username);
             collidR.autoFormatters.reloadWarning.removeClass('hide');
-            collidR.log(data.name + " has saved this entity.");
+            collidR.log(data.username + " has saved this entity.");
         });
 
         var removeCurrentShadow = function () {

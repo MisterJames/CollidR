@@ -37,14 +37,20 @@
                 collidR.autoFormatters.editorsPane
                     .removeClass('alert-success')
                     .addClass('alert-warning');
+
                 // set the text
-                var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors: ';
+                var warningText = '<span class="glyphicon glyphicon-eye-open"></span> There are currently ' + users.length + ' editors, you and: ';
                 users.forEach(function (user, index) {
+
                     var trimmedUser = user.replace(' ', '');
-                    warningText += trimmedUser + ' <span href="#" style="cursor:pointer" class="shadowUser glyphicon glyphicon-eye-open alert-link" data-collidr-username="' + trimmedUser + '" title="Show ' + trimmedUser + '\'s changes"></span> ';
-                    if (index != users.length - 1) {
-                        warningText += ', ';
+
+                    if (trimmedUser != $.collidR.currentUser) {
+                        warningText += trimmedUser + ' <span href="#" style="cursor:pointer" class="shadowUser glyphicon glyphicon-eye-open alert-link" data-collidr-username="' + trimmedUser + '" title="Show ' + trimmedUser + '\'s changes"></span> ';
+                        if (index != users.length - 1) {
+                            warningText += ' ';
+                        }
                     }
+
                 });
                 collidR.autoFormatters.editorsList.html(warningText);
             }
@@ -67,6 +73,7 @@
                         .attr("name", "")
                         .addClass("shadow")
                         .attr('readonly', true)
+
                         .css('opacity', 0.5) //TODO: Would be better to do this in a CollidR.css file so people can customize the styling
                         .insertAfter($(element));
                 });
@@ -127,9 +134,9 @@
 
         $(window).on(collidR.events.onModelSave, function (e, data) {
             collidR.autoFormatters.editorsPane.hide();
-            collidR.autoFormatters.reloadEditor.html(data.name);
+            collidR.autoFormatters.reloadEditor.html(data.username);
             collidR.autoFormatters.reloadWarning.removeClass('hide');
-            collidR.log(data.name + " has saved this entity.");
+            collidR.log(data.username + " has saved this entity.");
         });
 
         var removeCurrentShadow = function () {
