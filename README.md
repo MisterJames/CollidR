@@ -18,16 +18,23 @@ Install-Package CollidR
 ```
 
  * In the Startup class for your project, call app.MapSignalR() in the Configuration method 
- * In your Edit view, add the CollidR editor pane and alert area using the following Html helper
+ * Register a new bundle for the SignalR scripts in BundleConfig
+
+```
+    bundles.Add(new ScriptBundle("~/bundles/signalr").Include("~/Scripts/jquery.signalR-{version}.js"));
+```
+
+ * In your Edit view add the CollidR editor pane and alert area using the following Html helper
 
 ```
     @Html.CollidREditorPane()
     @Html.CollidRAlertArea()
 ```
 
-* Create an instance of the CollidR proxy and Register the client using the following html helper
+* Also in the edit view, render the SignalR script bundle and create an instance of the CollidR proxy and Register the client using the following html helper
 
 ```
+    @Scripts.Render("~/bundles/signalr")
     @Html.RegisterCollidRFor(p => p.PersonId)
 ```
 
