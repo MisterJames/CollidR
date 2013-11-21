@@ -8,22 +8,18 @@ Check out the introduction on YouTube:
 
 Getting it Running in Your Project
 =======
-Run the CollidR.Sample project (go to /person) to get a sense of what's going on. It's even better with two browsers running!
+Run the CollidR.Mvc5.Sample project (go to /person) to get a sense of what's going on. It's even better with two browsers running!
 
-To get it going in your own project you'll need to
- * reference the CollidR DLL
- * copy CollidR.js into your scripts folder
- * call RouteTable.Routes.MapHubs(); from Application_Start
- * reference the script from your edit page
- * create an instance of the CollidR proxy and register the client
+To get it going in your MVC5 project
+ * Install the CollidR.Mvc [Nuget package](https://www.nuget.org/packages/CollidR/)
+ * In the Startup class for your project, call app.MapSignalR() in the Configuration method 
+ * In your Edit view, add the CollidR editor pane and alert area using the following Html helper
+    @Html.CollidREditorPane()
+    @Html.CollidRAlertArea()
+ * Create an instance of the CollidR proxy and Register the client using the following html helper
+    @Html.RegisterCollidRFor(p => p.PersonId)
 
-You can see how this is done in the intro video above.
-
-A NuGet package helps put most of the above in place. Just drop into the Package Manager Console and type
-
-    install-package CollidR
-    
-...or check out the package on [Nuget](https://www.nuget.org/packages/CollidR/).
+Note: Users must be authenticated before accessing any pages that use CollidR
 
 Contributing
 =======
