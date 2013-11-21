@@ -36,3 +36,10 @@ License
 =======
 Licensed under the [Apache License, Version 2.0](https://github.com/MisterJames/CollidR/blob/master/LICENSE).
 
+Acknowledgements
+=======
+ * Be sure to check out the [SignalR Project](https://github.com/signalr/signalr)
+ * We're trying to be awesome at install. Thanks to the [Glimpse](https://github.com/Glimpse/Glimpse) folks for setting the bar good and high
+  
+ 
+
