@@ -1,9 +1,9 @@
 ﻿/* CollidR.Core.js /
 /*
- * CollidR JavaScript Library v0.1.0
+ * CollidR JavaScript Library v1.0.0
  * http://github.com/MisterJames/CollidR
  *
- * Copyright James Chambers. All rights reserved.
+ * Copyright James Chambers and David Paquette. All rights reserved.
  * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  */
 
@@ -232,7 +232,7 @@
  * stringDictionary for CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
  *
- * Copyright James Chambers. All rights reserved.
+ * Copyright James Chambers and David Paquette. All rights reserved.
  * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  */
 (function ($, window) {
@@ -320,10 +320,10 @@
 
 /* CollidR.BootstrapFormatter.js */
 /*
- * Twitter.Bootstrap Formatter for CollidR JavaScript Library v0.1.0
+ * Twitter.Bootstrap Formatter for CollidR JavaScript Library v1.0.0
  * http://github.com/MisterJames/CollidR
  *
- * Copyright James Chambers. All rights reserved.
+ * Copyright James Chambers and David Paquette. All rights reserved.
  * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  * Applies changes to the page based on the Twitter Bootstrap library
  */
