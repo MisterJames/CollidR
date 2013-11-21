@@ -11,7 +11,12 @@ Getting it Running in Your Project
 Run the CollidR.Mvc5.Sample project (go to /person) to get a sense of what's going on. It's even better with two browsers running!
 
 To get it going in your MVC5 project
- * Install the CollidR.Mvc [Nuget package](https://www.nuget.org/packages/CollidR/)
+ * Install the CollidR [Nuget package](https://www.nuget.org/packages/CollidR/)
+
+```
+Install-Package CollidR
+```
+
  * In the Startup class for your project, call app.MapSignalR() in the Configuration method 
  * In your Edit view, add the CollidR editor pane and alert area using the following Html helper
 
