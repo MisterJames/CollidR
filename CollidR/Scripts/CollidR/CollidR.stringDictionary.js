@@ -3,7 +3,7 @@
  * stringDictionary for CollidR JavaScript Library v0.1.0
  * http://github.com/MisterJames/CollidR
  *
- * Copyright James Chambers. All rights reserved.
+ * Copyright James Chambers and David Paquette. All rights reserved.
  * Licensed under Apache 2.0 https://github.com/MisterJames/CollidR/wiki/CollidR-License
  */
 (function ($, window) {
