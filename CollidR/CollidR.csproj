@@ -93,8 +93,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <PropertyGroup>
-    <PostBuildEvent>call $(SolutionDir)runGrunt.bat "$(SolutionDir)"
-xcopy /y  $(SolutionDir)CollidR\Scripts\CollidR*.js $(SolutionDir)CollidR.Mvc5.Sample\Scripts\</PostBuildEvent>
+    <PostBuildEvent>$(SolutionDir)runGrunt.bat "$(SolutionDir)"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
