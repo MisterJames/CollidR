@@ -110,3 +110,9 @@ UpgradeLog*.XML
 #Ignore databases in APP_DATA
 CollidR.Mvc5.Sample/App_Data/*.mdf
 CollidR.Mvc5.Sample/App_Data/*.ldf
+
+#Generated (grunted) Javascript files
+CollidR/Scripts/CollidR.js
+CollidR/Scripts/CollidR.min.js
+CollidR.Mvc5.Sample/Scripts/CollidR.js
+CollidR.Mvc5.Sample/Scripts/CollidR.min.js

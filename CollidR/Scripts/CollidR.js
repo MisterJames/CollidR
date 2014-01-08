@@ -1,4 +1,4 @@
-﻿/* CollidR.Core.js /
+/* CollidR.Core.js /
 /*
  * CollidR JavaScript Library v1.0.0
  * http://github.com/MisterJames/CollidR
@@ -13,6 +13,8 @@
 (function ($, window) {
     "use strict";
 
+
+    
     if (typeof ($.signalR) !== "function") {
         throw new Error("CollidR: SignalR is not loaded. Please ensure jquery.signalR-x.js is referenced before referencing CollidR.");
     }

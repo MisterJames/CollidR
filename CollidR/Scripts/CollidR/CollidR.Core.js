@@ -12,7 +12,7 @@
 
 (function ($, window) {
     "use strict";
-
+    
     if (typeof ($.signalR) !== "function") {
         throw new Error("CollidR: SignalR is not loaded. Please ensure jquery.signalR-x.js is referenced before referencing CollidR.");
     }
